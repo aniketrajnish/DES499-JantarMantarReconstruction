@@ -25,7 +25,7 @@ public class Cycles : MonoBehaviour
         t = TimeSpan.FromSeconds(time);
         string[] temp = t.ToString().Split(":"[0]);
         timeText.text = temp[0] + ":" + temp[1];
-        sunTransform.rotation = Quaternion.Euler(new Vector3((time-21600)/86400*360, (time - 21600) / 86400 * 360, 0));
+        sunTransform.rotation = Quaternion.Euler(new Vector3((time-21600)/86400*360, 0, 0));
 
         if (time > 86400)
             time = 0;
