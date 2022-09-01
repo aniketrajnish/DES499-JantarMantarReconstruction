@@ -13,7 +13,7 @@ public class Cycles : MonoBehaviour
     float intensity;
     float camPivY = 0;
     [SerializeField] Transform camPivot;
-    [SerializeField] TextMeshProUGUI HH, MM;
+    [SerializeField] TMP_InputField HH, MM;
 
     public Light sun;
     [SerializeField] int factor;
@@ -66,13 +66,13 @@ public class Cycles : MonoBehaviour
         else
             camPivY = 0;
 
-        camPivot.Rotate(new Vector3(0, camPivY, 0));
+        camPivot.Rotate(new Vector3(0, camPivY, 0));       
     }
     public void AssignTime()
     {
         print(HH.text);
         print(MM.text);
-        float hour = 
-        time = float.Parse(HH.text.Replace(".", ",")) * 3600f + float.Parse("0" + MM.text.Replace(".", ",")) * 60f;
+        time = float.Parse(HH.text) * 3600 + float.Parse(MM.text) * 60;
+        Cycle(0);
     }
 }
