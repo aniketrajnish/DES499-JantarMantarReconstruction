@@ -13,6 +13,7 @@ public class Cycles : MonoBehaviour
     float intensity;
     float camPivY = 0;
     [SerializeField] Transform camPivot;
+    [SerializeField] TextMeshProUGUI HH, MM;
 
     public Light sun;
     [SerializeField] int factor;
@@ -20,14 +21,14 @@ public class Cycles : MonoBehaviour
     {
         timeText = GetComponent<TextMeshProUGUI>();
         sunTransform = sun.transform;
-        Cycle(true);
-        Cycle(false);
+        Cycle(0);
+        Cycle(0);
     }
-    void Cycle(bool increment)
+    void Cycle(float _inp)
     {
-        if (increment)
+        if (_inp > 0)
             time += factor * Time.deltaTime;
-        else
+        else if (_inp < 0)
             time -= factor * Time.deltaTime;
 
         t = TimeSpan.FromSeconds(time);
@@ -56,13 +57,7 @@ public class Cycles : MonoBehaviour
     void Update()
     {
         float inp = Input.GetAxis("Vertical");
-
-        if (inp > 0)
-            Cycle(true);
-        else if (inp < 0)
-            Cycle(false);
-
-        Vector3 camEul = camPivot.eulerAngles;
+        Cycle(inp);
 
         if (Input.GetKey(KeyCode.Q))
             camPivY = -1;
@@ -72,6 +67,12 @@ public class Cycles : MonoBehaviour
             camPivY = 0;
 
         camPivot.Rotate(new Vector3(0, camPivY, 0));
-
+    }
+    public void AssignTime()
+    {
+        print(HH.text);
+        print(MM.text);
+        float hour = 
+        time = float.Parse(HH.text.Replace(".", ",")) * 3600f + float.Parse("0" + MM.text.Replace(".", ",")) * 60f;
     }
 }
