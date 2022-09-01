@@ -56,12 +56,14 @@ public class Cycles : MonoBehaviour
     }
     void Update()
     {
-        float inp = Input.GetAxis("Vertical");
-        Cycle(inp);
+        float vert = Input.GetAxis("Vertical");
+        float hor = Input.GetAxis("Horizontal");
+        
+        Cycle(vert);
 
-        if (Input.GetKey(KeyCode.Q))
+        if (hor < 0)
             camPivY = -1;
-        else if (Input.GetKey(KeyCode.E))
+        else if (hor > 0)
             camPivY = 1;
         else
             camPivY = 0;
