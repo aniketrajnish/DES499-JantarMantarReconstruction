@@ -20,6 +20,8 @@ public class Cycles : MonoBehaviour
     {
         timeText = GetComponent<TextMeshProUGUI>();
         sunTransform = sun.transform;
+        Cycle(true);
+        Cycle(false);
     }
     void Cycle(bool increment)
     {
@@ -53,7 +55,7 @@ public class Cycles : MonoBehaviour
     }
     void Update()
     {
-        float inp = Input.GetAxis("Horizontal");
+        float inp = Input.GetAxis("Vertical");
 
         if (inp > 0)
             Cycle(true);
