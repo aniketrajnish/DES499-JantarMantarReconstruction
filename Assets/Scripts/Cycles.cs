@@ -11,6 +11,8 @@ public class Cycles : MonoBehaviour
     Transform sunTransform;    
     TextMeshProUGUI timeText;
     float intensity;
+    float camPivY = 0;
+    [SerializeField] Transform camPivot;
 
     public Light sun;
     [SerializeField] int factor;
@@ -19,27 +21,55 @@ public class Cycles : MonoBehaviour
         timeText = GetComponent<TextMeshProUGUI>();
         sunTransform = sun.transform;
     }
-    void Cycle()
+    void Cycle(bool increment)
     {
-        time += factor * Time.deltaTime;    
-        t = TimeSpan.FromSeconds(time);
-        string[] temp = t.ToString().Split(":"[0]);
-        timeText.text = temp[0] + ":" + temp[1];
-        sunTransform.rotation = Quaternion.Euler(new Vector3((time-21600)/86400*360, 0, 0));
+        if (increment)
+            time += factor * Time.deltaTime;
+        else
+            time -= factor * Time.deltaTime;
 
-        if (time > 86400)
+        t = TimeSpan.FromSeconds(time);
+
+        if (t.TotalSeconds < 0)
+            t = -t;
+
+        string[] temp = t.ToString().Split(":"[0]);
+        timeText.text = temp[0] + ":" + temp[1];       
+
+        float tempTime = time;
+        tempTime = Mathf.Abs(time);
+
+        sunTransform.rotation = Quaternion.Euler(new Vector3((tempTime - 21600) / 86400 * 360, 0, 0));
+        if (tempTime > 86400)
             time = 0;
 
-        if (time < 43200)
-            intensity = 1 - (43200 - time) / 43200;
+        if (tempTime < 43200)
+            intensity = 1 - (43200 - tempTime) / 43200;
         else
-            intensity = 1 - (time - 43200) / 43200;
+            intensity = 1 - (tempTime - 43200) / 43200;
 
         RenderSettings.fogColor = Color.Lerp(Color.black, Color.grey, intensity*intensity);
         sun.intensity = intensity;
     }
     void Update()
     {
-        Cycle();
+        float inp = Input.GetAxis("Horizontal");
+
+        if (inp > 0)
+            Cycle(true);
+        else if (inp < 0)
+            Cycle(false);
+
+        Vector3 camEul = camPivot.eulerAngles;
+
+        if (Input.GetKey(KeyCode.Q))
+            camPivY = -1;
+        else if (Input.GetKey(KeyCode.E))
+            camPivY = 1;
+        else
+            camPivY = 0;
+
+        camPivot.Rotate(new Vector3(0, camPivY, 0));
+
     }
 }
