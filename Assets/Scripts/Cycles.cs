@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using TMPro;
 
@@ -14,6 +15,13 @@ public class Cycles : MonoBehaviour
     float camPivY = 0;
     [SerializeField] Transform camPivot;
     [SerializeField] TMP_InputField HH, MM;
+    [SerializeField] Slider pan_View;
+
+    bool is_Clock_Rotating = false;
+    int external_Clock_Input = 0;
+    float initialY_rot;
+
+    Vector2 input;
 
     public Light sun;
     [SerializeField] int factor;
@@ -23,13 +31,14 @@ public class Cycles : MonoBehaviour
         sunTransform = sun.transform;
         Cycle(0);
         Cycle(0);
+        initialY_rot = camPivot.transform.rotation.y;
     }
     void Cycle(float _inp)
     {
         if (_inp > 0)
-            time += factor * Time.deltaTime;
+            time += factor * Time.deltaTime * _inp;
         else if (_inp < 0)
-            time -= factor * Time.deltaTime;
+            time -= factor * Time.deltaTime * _inp;
 
         t = TimeSpan.FromSeconds(time);
 
@@ -56,19 +65,18 @@ public class Cycles : MonoBehaviour
     }
     void Update()
     {
-        float vert = Input.GetAxis("Vertical");
-        float hor = Input.GetAxis("Horizontal");
-        
-        Cycle(vert);
 
-        if (hor < 0)
-            camPivY = -1;
-        else if (hor > 0)
-            camPivY = 1;
-        else
-            camPivY = 0;
+        Take_Input();
+        Cycle(input.y);
 
-        camPivot.Rotate(new Vector3(0, camPivY, 0));       
+        /*        if (input.x < 0)
+                    camPivY = -1;
+                else if (input.x > 0)
+                    camPivY = 1;
+                else
+                    camPivY = 0;*/
+
+        camPivot.transform.rotation = Quaternion.Euler(0, initialY_rot + input.x, 0);  
     }
     public void AssignTime()
     {
@@ -76,5 +84,42 @@ public class Cycles : MonoBehaviour
         print(MM.text);
         time = float.Parse(HH.text) * 3600 + float.Parse(MM.text) * 60;
         Cycle(0);
+    }
+
+    public void Start_Clock()
+    {
+        is_Clock_Rotating = true;
+    }
+
+    public void Stop_Clock()
+    {
+        is_Clock_Rotating = false;
+    }
+
+    void Take_Input()
+    {
+        if(is_Clock_Rotating == true)
+        {
+            input.y = 1;
+        }
+        else
+        {
+            input.y = external_Clock_Input;
+            if(external_Clock_Input != 0)
+            {
+                external_Clock_Input = 0;
+            }
+        }
+        input.x = pan_View.value * 360;
+    }
+
+    public void Forward_External_Input()
+    {
+        external_Clock_Input = 300;
+    }
+
+    public void Backward_External_Input()
+    {
+        external_Clock_Input = -300;
     }
 }
